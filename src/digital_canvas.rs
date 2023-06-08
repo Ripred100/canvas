@@ -46,11 +46,10 @@ impl RgbPixel {
         }
     }
 
-    pub fn set_rgb(mut self, (red, green, blue): (u8, u8, u8)) -> RgbPixel {
+    pub fn set_rgb(&mut self, (red, green, blue): (u8, u8, u8)){
         self.red = red;
         self.green = green;
         self.blue = blue;
-        self
     }
 
     pub fn color(self) -> (u8, u8, u8) {
