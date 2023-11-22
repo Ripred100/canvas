@@ -1,8 +1,8 @@
 use rand::Rng;
 
 #[derive(Copy, Clone)]
-pub struct DigitalCanvas {
-    pub pixels: [[RgbPixel; 10]; 10],
+pub struct DigitalCanvas<const N: usize> {
+    pub pixels: [[RgbPixel; N]; N],
 }
 
 #[derive(Copy, Clone)]
@@ -63,10 +63,10 @@ impl RgbPixel {
     }
 }
 
-impl DigitalCanvas {
-    pub fn new() -> DigitalCanvas {
+impl<const N: usize> DigitalCanvas<N> {
+    pub fn new() -> DigitalCanvas<N> {
         let mut canvas = DigitalCanvas {
-            pixels: [[RgbPixel::default(); 10]; 10],
+            pixels: [[RgbPixel::default(); N]; N],
         };
         for row in &mut canvas.pixels {
             for pixel in row {
