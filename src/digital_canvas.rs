@@ -76,3 +76,42 @@ impl<const N: usize> DigitalCanvas<N> {
         canvas
     }
 }
+
+impl<const N: usize> IntoIterator for DigitalCanvas<N> {
+    type Item = RgbPixel;
+    type IntoIter = CanvasIntoIterator<N>;
+    fn into_iter(self) -> Self::IntoIter {
+        CanvasIntoIterator {
+            pixels: self.pixels,
+            index: 0
+        }
+    }
+}
+pub struct CanvasIntoIterator<const N: usize> {
+    pixels: [[RgbPixel; N]; N],
+    index: usize, 
+}
+
+impl<'a, const N: usize> Iterator for CanvasIntoIterator<N> {
+    type Item = RgbPixel;
+    fn next(&mut self) -> Option<RgbPixel> {
+        if self.index >= N*N {
+            return None
+        }
+        else {
+            // Rows always index from top to bottom for now
+            let y = self.index / N;
+            // columns index start from the right, and snake every row.
+            // This is not intuitive at all, and should definitely be controlled by a config
+            let x = match y/2 {
+                0 =>  N - 1 - (self.index % N),
+                1 => self.index % N ,
+                _ => unreachable!()
+            };
+            self.index += 1;
+            return Some(self.pixels[x][y])
+        }
+
+    }
+}
+
