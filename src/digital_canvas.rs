@@ -5,7 +5,7 @@ pub struct DigitalCanvas<const N: usize> {
     pub pixels: [[RgbPixel; N]; N],
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct RgbPixel {
     pub red: u8,
     pub green: u8,
@@ -92,6 +92,34 @@ pub struct CanvasIntoIterator<const N: usize> {
     index: usize, 
 }
 
+
+/// An iterator implementation that gives the contained [RgbPixel]'s in order.
+/// In the futire this will probably be configurable to acomodate different hardware implementations
+/// of physical LED pannels.
+/// A pixel's position in canvas.pixels[n][m] corresponds to ROW n and COLUMN m. 
+/// 
+/// The current implementation starts at the top right corner of the canvas, going to the left, and snakes on every new row
+/// i.e: in a 3x3 canvas, the first element returned from the iterator is row 0, column 2, followed by row 0, column 1
+/// ```rust
+/// use canvy::DigitalCanvas;
+/// let canvas = DigitalCanvas::<3>::new();
+/// let pxl0_0 = canvas.pixels[0][0];
+/// let pxl0_1 = canvas.pixels[0][1];
+/// let pxl0_2 = canvas.pixels[0][2];
+/// let pxl1_0 = canvas.pixels[1][0];
+/// let pxl1_1 = canvas.pixels[1][1];
+/// let pxl1_2 = canvas.pixels[1][2];
+/// let pxl2_0 = canvas.pixels[2][0];
+/// let pxl2_1 = canvas.pixels[2][1];
+/// let pxl2_2 = canvas.pixels[2][2];
+/// 
+/// let ordered = [pxl0_2, pxl0_1, pxl0_0, pxl1_0, pxl1_1, pxl1_2, pxl2_2, pxl2_1, pxl2_0];
+/// 
+/// for (i, pixel) in canvas.into_iter().enumerate() {
+/// assert_eq!(ordered[i], pixel);
+/// }
+/// 
+
 impl<'a, const N: usize> Iterator for CanvasIntoIterator<N> {
     type Item = RgbPixel;
     fn next(&mut self) -> Option<RgbPixel> {
@@ -100,16 +128,16 @@ impl<'a, const N: usize> Iterator for CanvasIntoIterator<N> {
         }
         else {
             // Rows always index from top to bottom for now
-            let y = self.index / N;
+            let row = self.index / N;
             // columns index start from the right, and snake every row.
             // This is not intuitive at all, and should definitely be controlled by a config
-            let x = match y%2 {
+            let column = match row%2 {
                 0 =>  N - 1 - (self.index % N),
                 1 => self.index % N ,
                 _ => unreachable!()
             };
             self.index += 1;
-            return Some(self.pixels[x][y])
+            return Some(self.pixels[row][column])
         }
 
     }
