@@ -98,7 +98,7 @@ pub struct CanvasIntoIterator<const N: usize> {
 /// of physical LED pannels.
 /// A pixel's position in canvas.pixels[n][m] corresponds to ROW n and COLUMN m. 
 /// 
-/// The current implementation starts at the top right corner of the canvas, going to the left, and snakes on every new row
+/// The current implementation starts at the top right corner of the canvas, going to the left, returns to the right onevery new row
 /// i.e: in a 3x3 canvas, the first element returned from the iterator is row 0, column 2, followed by row 0, column 1
 /// ```rust
 /// use canvy::DigitalCanvas;
@@ -113,7 +113,7 @@ pub struct CanvasIntoIterator<const N: usize> {
 /// let pxl2_1 = canvas.pixels[2][1];
 /// let pxl2_2 = canvas.pixels[2][2];
 /// 
-/// let ordered = [pxl0_2, pxl0_1, pxl0_0, pxl1_0, pxl1_1, pxl1_2, pxl2_2, pxl2_1, pxl2_0];
+/// let ordered = [pxl0_2, pxl0_1, pxl0_0, pxl1_2, pxl1_1, pxl1_0, pxl2_2, pxl2_1, pxl2_0];
 /// 
 /// for (i, pixel) in canvas.into_iter().enumerate() {
 /// assert_eq!(ordered[i], pixel);
@@ -129,11 +129,13 @@ impl<'a, const N: usize> Iterator for CanvasIntoIterator<N> {
         else {
             // Rows always index from top to bottom for now
             let row = self.index / N;
-            // columns index start from the right, and snake every row.
+            // columns index start from the right.
             // This is not intuitive at all, and should definitely be controlled by a config
+
+            // This match statement does't do anything for now, but will allow snaking in the future
             let column = match row%2 {
-                0 =>  N - 1 - (self.index % N),
-                1 => self.index % N ,
+                0 => N - 1 - (self.index % N),
+                1 => N - 1 - (self.index % N), //self.index % N ,
                 _ => unreachable!()
             };
             self.index += 1;
