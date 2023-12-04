@@ -103,7 +103,7 @@ impl<'a, const N: usize> Iterator for CanvasIntoIterator<N> {
             let y = self.index / N;
             // columns index start from the right, and snake every row.
             // This is not intuitive at all, and should definitely be controlled by a config
-            let x = match y/2 {
+            let x = match y%2 {
                 0 =>  N - 1 - (self.index % N),
                 1 => self.index % N ,
                 _ => unreachable!()
