@@ -1,6 +1,6 @@
 use rand::Rng;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct DigitalCanvas<const N: usize> {
     pub pixels: [[RgbPixel; N]; N],
 }
