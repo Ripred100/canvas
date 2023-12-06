@@ -1,6 +1,6 @@
 [package]
 name = "canvy"
-version = "0.2.4"
+version = "0.2.5"
 edition = "2021"
 authors = ["Anuar <anuarsaenger.2001@gmail.com>"]
 description = "A helper package for representing 2D canvases"
